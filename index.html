@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCS-102: Web Application Development Exam Prep</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .nav-active {
+            border-bottom: 2px solid #0f766e;
+            color: #0f766e;
+            font-weight: 600;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 40vh;
+            max-height: 400px;
+        }
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 35vh;
+            }
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
+        .hidden { display: none !important; }
+    </style>
+    <!-- Chosen Palette: Slate (neutrals) and Teal/Cyan (accents) for a calm, academic, focused environment -->
+    <!-- Application Structure Plan: The SPA is structured as a non-linear study dashboard. 
+         1. Hero/Overview: Quick context and progress tracking.
+         2. Data Viz (Topic Trends): Shows frequency of PYQ topics to help students prioritize studying.
+         3. PYQ Explorer: A searchable/filterable database of past questions with expanded 'exam-ready' answers synthesized from notes.
+         4. Mock Test Generator: Randomly compiles a mock exam based on PYQ patterns for self-assessment.
+         5. Quick Revision: Tabbed interface for rapid syntax and definition review.
+         This structure is chosen to support active learning, allowing students to diagnose weaknesses via charts, review specific answers, and test themselves, rather than just reading a linear document. -->
+    <!-- Visualization & Content Choices: 
+         - Topic Frequency -> Goal: Inform/Prioritize -> Chart.js Bar Chart -> Interaction: Hover tooltips -> Justification: Quickly communicates high-yield exam topics without heavy reading.
+         - PYQ Database -> Goal: Organize/Explore -> Filterable list with accordion answers -> Interaction: Dropdown filters, click to expand -> Justification: Manages dense text efficiently, keeps user focused on one answer at a time.
+         - Quick Revision -> Goal: Organize -> Tabbed Panels -> Interaction: Click tabs -> Justification: Segregates HTML, CSS, XML logically.
+         - NO SVG/Mermaid used. Layout uses CSS/Tailwind utilities and Unicode icons. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="text-slate-800 antialiased overflow-x-hidden">
+
+    <nav class="sticky top-0 z-50 glass-panel shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl mr-2">🎓</span>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">BCS-102 Prep Hub</span>
+                </div>
+                <div class="flex space-x-4 sm:space-x-8 overflow-x-auto no-scrollbar items-center">
+                    <button onclick="navTo('dashboard')" id="nav-dashboard" class="nav-active px-1 py-4 text-sm font-medium whitespace-nowrap transition-colors">📊 Dashboard</button>
+                    <button onclick="navTo('pyq')" id="nav-pyq" class="text-slate-500 hover:text-slate-700 px-1 py-4 text-sm font-medium whitespace-nowrap transition-colors">📚 PYQ Explorer</button>
+                    <button onclick="navTo('mock')" id="nav-mock" class="text-slate-500 hover:text-slate-700 px-1 py-4 text-sm font-medium whitespace-nowrap transition-colors">📝 Mock Test</button>
+                    <button onclick="navTo('revision')" id="nav-revision" class="text-slate-500 hover:text-slate-700 px-1 py-4 text-sm font-medium whitespace-nowrap transition-colors">⚡ Quick Revision</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <section id="sec-dashboard" class="block animate-fade-in">
+            <div class="mb-8">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-2">Web Application Development</h1>
+                <p class="text-lg text-slate-600">Unit I & Unit II Exam Analysis and Revision Assistant. Based strictly on class notes and 2024-2025 PYQs.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-center">
+                    <div class="text-4xl mr-4">📌</div>
+                    <div>
+                        <p class="text-sm text-slate-500 font-semibold uppercase tracking-wider">Analyzed Papers</p>
+                        <p class="text-2xl font-bold text-slate-800">3</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-center">
+                    <div class="text-4xl mr-4">🔥</div>
+                    <div>
+                        <p class="text-sm text-slate-500 font-semibold uppercase tracking-wider">Most Repeated</p>
+                        <p class="text-xl font-bold text-slate-800">HTML vs XML</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-center">
+                    <div class="text-4xl mr-4">📦</div>
+                    <div>
+                        <p class="text-sm text-slate-500 font-semibold uppercase tracking-wider">Key Topic</p>
+                        <p class="text-xl font-bold text-slate-800">CSS Box Model</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+                <h2 class="text-xl font-bold text-slate-800 mb-4">Topic Frequency in PYQs</h2>
+                <p class="text-sm text-slate-600 mb-6">This chart visualizes the frequency of specific topics appearing in the analyzed mid-term and re-mid term question papers. Focus your study on the highest bars.</p>
+                <div class="chart-container">
+                    <canvas id="topicChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-pyq" class="hidden animate-fade-in">
+            <div class="mb-8">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-2">PYQ Answer Explorer</h2>
+                <p class="text-slate-600">Explore previous year questions. Answers are structured in university exam format (Definitions, Explanations, Key Points, Code) based purely on your class notes.</p>
+            </div>
+
+            <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 mb-6 flex flex-wrap gap-4 items-center">
+                <span class="font-semibold text-slate-700">Filter by:</span>
+                <select id="filter-unit" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block p-2.5" onchange="filterPYQs()">
+                    <option value="all">All Units</option>
+                    <option value="1">Unit I (HTML, Forms, Python)</option>
+                    <option value="2">Unit II (CSS, XML)</option>
+                </select>
+                <select id="filter-topic" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block p-2.5" onchange="filterPYQs()">
+                    <option value="all">All Topics</option>
+                    <option value="HTML Basics">HTML Basics</option>
+                    <option value="Forms & Tables">Forms & Tables</option>
+                    <option value="Multimedia & Frames">Multimedia & Frames</option>
+                    <option value="Python">Python</option>
+                    <option value="CSS">CSS & Box Model</option>
+                    <option value="XML">XML</option>
+                </select>
+            </div>
+
+            <div id="pyq-container" class="space-y-4">
+            </div>
+        </section>
+
+        <section id="sec-mock" class="hidden animate-fade-in">
+            <div class="mb-8 text-center">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-2">Mock Exam Generator</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto mb-6">Generate a random mock examination paper based on the weightage and patterns of your previous papers (Unit 1 & 2 only).</p>
+                <button onclick="generateMock()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-colors text-lg">
+                    🎲 Generate New Mock Paper
+                </button>
+            </div>
+
+            <div id="mock-paper-container" class="hidden bg-white rounded-xl shadow-lg border border-slate-300 p-8 sm:p-12">
+                <div class="text-center border-b-2 border-slate-800 pb-4 mb-6">
+                    <h3 class="text-2xl font-bold uppercase tracking-wider mb-2">Mock Mid-Term Examination</h3>
+                    <p class="font-semibold text-lg">Course Code: BCS-102 | Web Application Development</p>
+                    <div class="flex justify-between mt-4 text-sm font-bold">
+                        <span>Time: 1.5 Hours</span>
+                        <span>Maximum Marks: 30</span>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h4 class="font-bold text-lg mb-2 bg-slate-100 p-2 border-l-4 border-slate-800">Q1. Attempt all parts (Compulsory) [2.5 * 4 = 10 Marks]</h4>
+                    <ol id="mock-q1" class="list-[lower-alpha] pl-6 space-y-4 font-medium text-slate-800"></ol>
+                </div>
+
+                <div class="mb-8">
+                    <h4 class="font-bold text-lg mb-2 bg-slate-100 p-2 border-l-4 border-slate-800">UNIT I: Q2. Attempt any two parts [5 * 2 = 10 Marks]</h4>
+                    <ol id="mock-q2" class="list-[lower-alpha] pl-6 space-y-4 font-medium text-slate-800"></ol>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-lg mb-2 bg-slate-100 p-2 border-l-4 border-slate-800">UNIT II: Q3. Attempt any two parts [5 * 2 = 10 Marks]</h4>
+                    <ol id="mock-q3" class="list-[lower-alpha] pl-6 space-y-4 font-medium text-slate-800"></ol>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-revision" class="hidden animate-fade-in">
+            <div class="mb-8">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-2">1-Day Quick Revision Sheet</h2>
+                <p class="text-slate-600">Ultra-concise cheat sheets and key definitions for the night before the exam.</p>
+            </div>
+
+            <div class="border-b border-slate-200 mb-6">
+                <ul class="flex flex-wrap -mb-px text-sm font-medium text-center text-slate-500">
+                    <li class="mr-2">
+                        <button onclick="switchRevTab('html')" id="rev-tab-html" class="inline-flex p-4 border-b-2 border-teal-600 text-teal-600 rounded-t-lg group">
+                            <span class="mr-2 text-lg">🌐</span> HTML
+                        </button>
+                    </li>
+                    <li class="mr-2">
+                        <button onclick="switchRevTab('css')" id="rev-tab-css" class="inline-flex p-4 border-b-2 border-transparent hover:text-slate-600 hover:border-slate-300 rounded-t-lg group">
+                            <span class="mr-2 text-lg">🎨</span> CSS
+                        </button>
+                    </li>
+                    <li class="mr-2">
+                        <button onclick="switchRevTab('xml')" id="rev-tab-xml" class="inline-flex p-4 border-b-2 border-transparent hover:text-slate-600 hover:border-slate-300 rounded-t-lg group">
+                            <span class="mr-2 text-lg">📄</span> XML
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="rev-content-html" class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold mb-4 text-slate-800">HTML Syntax & Elements Checklist</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold text-teal-700 border-b pb-1 mb-2">Basic Structure</h4>
+                        <pre class="bg-slate-800 text-green-400 p-3 rounded text-sm overflow-x-auto">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Page Title&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;!-- Content --&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</pre>
+                        <h4 class="font-bold text-teal-700 border-b pb-1 mb-2 mt-4">Forms</h4>
+                        <ul class="list-disc pl-5 text-sm space-y-1">
+                            <li><code>&lt;form action="url" method="GET|POST"&gt;</code></li>
+                            <li><code>&lt;input type="text|password|radio|checkbox"&gt;</code></li>
+                            <li><code>&lt;select&gt; &lt;option&gt;</code> (Combo box)</li>
+                            <li><code>&lt;textarea rows="4" cols="50"&gt;</code></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-teal-700 border-b pb-1 mb-2">Tables</h4>
+                        <ul class="list-disc pl-5 text-sm space-y-1">
+                            <li><code>&lt;table&gt;</code>: Container</li>
+                            <li><code>&lt;tr&gt;</code>: Table Row</li>
+                            <li><code>&lt;th&gt;</code>: Table Header (bold, centered)</li>
+                            <li><code>&lt;td&gt;</code>: Table Data (cell)</li>
+                            <li>Attributes: <code>colspan="2"</code>, <code>rowspan="2"</code></li>
+                        </ul>
+                        <h4 class="font-bold text-teal-700 border-b pb-1 mb-2 mt-4">Multimedia & Frames</h4>
+                        <ul class="list-disc pl-5 text-sm space-y-1">
+                            <li><code>&lt;audio controls&gt; &lt;source src="x.mp3"&gt; &lt;/audio&gt;</code></li>
+                            <li><code>&lt;video width="320" controls&gt; &lt;source src="x.mp4"&gt; &lt;/video&gt;</code></li>
+                            <li><code>&lt;iframe src="url" height="200" width="300"&gt;</code> (Embed document)</li>
+                            <li><code>&lt;frameset cols="25%, *"&gt;</code> (Divides window - older approach)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="rev-content-css" class="hidden bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold mb-4 text-slate-800">CSS Concepts & Syntax Checklist</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold text-teal-700 border-b pb-1 mb-2">Three Ways to Add CSS</h4>
+                        <ol class="list-decimal pl-5 text-sm space-y-2">
+                            <li><strong>Inline:</strong> Directly inside tags.<br><code class="bg-slate-100 px-1 text-pink-600">&lt;h1 style="color:blue;"&gt;</code></li>
+                            <li><strong>Internal:</strong> Inside <code>&lt;head&gt;</code> using <code>&lt;style&gt;</code> tag.<br><code class="bg-slate-100 px-1 text-pink-600">&lt;style&gt; p { color: red; } &lt;/style&gt;</code></li>
+                            <li><strong>External:</strong> Separate .css file linked in head.<br><code class="bg-slate-100 px-1 text-pink-600">&lt;link rel="stylesheet" href="style.css"&gt;</code> (Best for large sites).</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-teal-700 border-b pb-1 mb-2">The CSS Box Model (SUPER IMPORTANT)</h4>
+                        <div class="bg-slate-100 p-4 rounded text-center border-2 border-slate-300 mb-2">
+                            <div class="border-2 border-dashed border-slate-400 p-2 text-xs">Margin (Transparent outer space)
+                                <div class="border-2 border-solid border-slate-800 p-2 bg-white text-xs">Border (Line around padding/content)
+                                    <div class="border-2 border-dotted border-green-300 p-2 bg-green-50 text-xs">Padding (Transparent space inside border)
+                                        <div class="bg-blue-100 border border-blue-300 p-2 font-bold text-xs">Content (Text/Image)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-600">Remember: Total width = width + left/right padding + left/right border + left/right margin.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="rev-content-xml" class="hidden bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold mb-4 text-slate-800">XML Cheat Sheet</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold text-teal-700 border-b pb-1 mb-2">XML vs HTML</h4>
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100">
+                                    <th class="border p-2">Feature</th>
+                                    <th class="border p-2">HTML</th>
+                                    <th class="border p-2">XML</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="border p-2 font-semibold">Purpose</td>
+                                    <td class="border p-2">Display data</td>
+                                    <td class="border p-2">Transport/Store data</td>
+                                </tr>
+                                <tr>
+                                    <td class="border p-2 font-semibold">Tags</td>
+                                    <td class="border p-2">Pre-defined</td>
+                                    <td class="border p-2">User-defined</td>
+                                </tr>
+                                <tr>
+                                    <td class="border p-2 font-semibold">Case</td>
+                                    <td class="border p-2">Not case-sensitive</td>
+                                    <td class="border p-2">Strictly case-sensitive</td>
+                                </tr>
+                                <tr>
+                                    <td class="border p-2 font-semibold">Closing</td>
+                                    <td class="border p-2">Optional sometimes</td>
+                                    <td class="border p-2">Mandatory always</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-teal-700 border-b pb-1 mb-2">DTD vs Schema</h4>
+                        <ul class="list-disc pl-5 text-sm space-y-2">
+                            <li><strong>DTD (Document Type Definition):</strong> Defines document structure. Uses non-XML syntax. Weak typing.</li>
+                            <li><strong>XML Schema:</strong> XML-based alternative to DTD. Supports data types (integer, date, string). Extensible. Used for validating XML content.</li>
+                            <li><strong>XML Namespaces:</strong> Solves element name conflicts using a prefix mapped to a URI (e.g., <code>xmlns:h="http://www.w3.org/TR/html4/"</code>).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-6 text-center text-sm mt-12">
+        <p>Built for BCS-102 Exam Preparation | Built by Ananya Joshi.</p>
+    </footer>
+
+    <script>
+        const pyqDatabase = [
+            {
+                unit: 1, topic: "HTML Basics", marks: 10,
+                q: "Outline the basic structure of an HTML document. Explain the purpose of each section, including doctype, html, head, and body tags.",
+                a: `
+                    <div class="mb-3"><strong>Definition:</strong> HTML (HyperText Markup Language) is the standard markup language for documents designed to be displayed in a web browser. The basic structure defines the skeleton of the webpage.</div>
+                    <ul class="list-disc pl-5 mb-3 space-y-2">
+                        <li><strong>&lt;!DOCTYPE html&gt;:</strong> Declaration that defines this document to be an HTML5 document. It helps the browser display the page correctly.</li>
+                        <li><strong>&lt;html&gt;:</strong> The root element of an HTML page. All other elements must be nested within this.</li>
+                        <li><strong>&lt;head&gt;:</strong> Contains meta-information about the page (not visible on the page itself), such as the title, character set, CSS links, and scripts.</li>
+                        <li><strong>&lt;body&gt;:</strong> Defines the document's body. Contains all the visible contents, such as headings, paragraphs, images, hyperlinks, tables, lists, etc.</li>
+                    </ul>
+                    <div class="bg-slate-800 text-green-400 p-3 rounded text-sm overflow-x-auto mt-2">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Page Title&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;This is a Heading&lt;/h1&gt;
+    &lt;p&gt;This is a paragraph.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+                    </div>
+                `
+            },
+            {
+                unit: 1, topic: "HTML Basics", marks: 5,
+                q: "Discuss the purpose of meta tags in HTML?",
+                a: `
+                    <div class="mb-3"><strong>Definition:</strong> <code>&lt;meta&gt;</code> tags provide metadata (data about data) about the HTML document. Metadata is not displayed on the page but is machine parsable.</div>
+                    <ul class="list-disc pl-5 mb-3 space-y-2">
+                        <li><strong>Purpose 1 (SEO):</strong> Used by search engines for keywords and page descriptions to index the page correctly.</li>
+                        <li><strong>Purpose 2 (Browser Instructions):</strong> Tell the browser how to control page dimensions and scaling (viewport), or instruct the browser to reload the page.</li>
+                        <li><strong>Purpose 3 (Character Set):</strong> Defines the character encoding (e.g., UTF-8) to ensure text displays correctly.</li>
+                    </ul>
+                    <div class="bg-slate-800 text-green-400 p-3 rounded text-sm overflow-x-auto mt-2">
+&lt;!-- Example of viewport setting for responsive design --&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+&lt;!-- Example of character set --&gt;
+&lt;meta charset="UTF-8"&gt;
+                    </div>
+                `
+            },
+            {
+                unit: 1, topic: "Forms & Tables", marks: 2.5,
+                q: "Design a table with two rows and two columns using HTML.",
+                a: `
+                    <div class="mb-3"><strong>Explanation:</strong> Tables are defined with the <code>&lt;table&gt;</code> tag. Rows are defined with <code>&lt;tr&gt;</code>, headers with <code>&lt;th&gt;</code>, and data cells with <code>&lt;td&gt;</code>.</div>
+                    <div class="bg-slate-800 text-green-400 p-3 rounded text-sm overflow-x-auto mt-2">
+&lt;table border="1"&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Heading 1&lt;/th&gt;
+    &lt;th&gt;Heading 2&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Data Row 1, Col 1&lt;/td&gt;
+    &lt;td&gt;Data Row 1, Col 2&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+                    </div>
+                `
+            },
+            {
+                unit: 1, topic: "Forms & Tables", marks: 10,
+                q: "Explain the different form elements in HTML, such as text boxes, password fields, checkboxes, radio buttons, list boxes, text areas, submit button and reset buttons by designing a suitable form.",
+                a: `
+                    <div class="mb-3"><strong>Explanation:</strong> HTML forms are used to collect user input. The <code>&lt;form&gt;</code> element is the container. Inside, various <code>&lt;input&gt;</code> types define the specific controls.</div>
+                    <ul class="list-disc pl-5 mb-3 space-y-2 text-sm">
+                        <li><strong>Text Box:</strong> <code>&lt;input type="text"&gt;</code> - Single-line text input.</li>
+                        <li><strong>Password:</strong> <code>&lt;input type="password"&gt;</code> - Masks characters.</li>
+                        <li><strong>Radio Button:</strong> <code>&lt;input type="radio"&gt;</code> - Select ONE option from a group (must have same 'name' attribute).</li>
+                        <li><strong>Checkbox:</strong> <code>&lt;input type="checkbox"&gt;</code> - Select ZERO or MORE options.</li>
+                        <li><strong>List Box (Combo Box):</strong> <code>&lt;select&gt;</code> containing <code>&lt;option&gt;</code> tags - Dropdown list.</li>
+                        <li><strong>Text Area:</strong> <code>&lt;textarea&gt;</code> - Multi-line text input.</li>
+                        <li><strong>Submit:</strong> <code>&lt;input type="submit"&gt;</code> - Sends form data to a server handler.</li>
+                        <li><strong>Reset:</strong> <code>&lt;input type="reset"&gt;</code> - Clears all form fields to default values.</li>
+                    </ul>
+                    <div class="bg-slate-800 text-green-400 p-3 rounded text-sm overflow-x-auto mt-2">
+&lt;form action="/submit_page" method="POST"&gt;
+  Name: &lt;input type="text" name="usr"&gt; &lt;br&gt;
+  Pass: &lt;input type="password" name="pwd"&gt; &lt;br&gt;
+  Gender: &lt;input type="radio" name="g" value="M"&gt; M &lt;input type="radio" name="g" value="F"&gt; F &lt;br&gt;
+  Hobbies: &lt;input type="checkbox" name="h" value="Read"&gt; Read &lt;br&gt;
+  City: &lt;select name="city"&gt;&lt;option&gt;Delhi&lt;/option&gt;&lt;/select&gt; &lt;br&gt;
+  Bio: &lt;textarea rows="4" cols="20"&gt;&lt;/textarea&gt; &lt;br&gt;
+  &lt;input type="submit" value="Send"&gt;
+  &lt;input type="reset" value="Clear"&gt;
+&lt;/form&gt;
+                    </div>
+                `
+            },
+            {
+                unit: 1, topic: "Multimedia & Frames", marks: 2.5,
+                q: "Give the difference between frames and iframes?",
+                a: `
+                    <div class="mb-3"><strong>Explanation:</strong> Both are used to display multiple HTML documents in a single browser window, but they function differently.</div>
+                    <table class="w-full text-left text-sm border-collapse mb-3">
+                        <tr class="bg-slate-100"><th class="border p-2">Frames (&lt;frameset&gt;, &lt;frame&gt;)</th><th class="border p-2">iFrames (&lt;iframe&gt;)</th></tr>
+                        <tr><td class="border p-2">Divides the entire browser window into distinct sections.</td><td class="border p-2">Embeds a secondary document inline anywhere within the flow of the main document.</td></tr>
+                        <tr><td class="border p-2">Cannot be used alongside the &lt;body&gt; tag.</td><td class="border p-2">Is placed inside the &lt;body&gt; tag like any other element (image, text).</td></tr>
+                        <tr><td class="border p-2">Considered deprecated in modern HTML5.</td><td class="border p-2">Fully supported and standard in HTML5.</td></tr>
+                    </table>
+                `
+            },
+            {
+                unit: 1, topic: "Multimedia & Frames", marks: 5,
+                q: "Define multimedia. How do HTML audio and video elements enable seamless multimedia integration on the web? Include examples.",
+                a: `
+                    <div class="mb-3"><strong>Definition:</strong> Multimedia comes in many different formats: text, audio, images, animations, video, etc. It is the integration of multiple forms of media.</div>
+                    <div class="mb-3"><strong>Integration:</strong> HTML5 introduced the native <code>&lt;audio&gt;</code> and <code>&lt;video&gt;</code> elements, eliminating the need for third-party plugins (like Flash) to play media. This makes integration seamless, standardized across browsers, and mobile-friendly. Attributes like <code>controls</code> automatically provide play/pause/volume UI.</div>
+                    <div class="bg-slate-800 text-green-400 p-3 rounded text-sm overflow-x-auto mt-2">
+&lt;!-- Audio Example --&gt;
+&lt;audio controls&gt;
+  &lt;source src="music.mp3" type="audio/mpeg"&gt;
+  Your browser does not support the audio element.
+&lt;/audio&gt;
+
+&lt;!-- Video Example --&gt;
+&lt;video width="320" height="240" controls&gt;
+  &lt;source src="movie.mp4" type="video/mp4"&gt;
+  Your browser does not support the video tag.
+&lt;/video&gt;
+                    </div>
+                `
+            },
+            {
+                unit: 1, topic: "Python", marks: 5,
+                q: "Explain how Python can be used to consume third-party APIs. Provide an example of making an HTTP GET request using the requests library.",
+                a: `
+                    <div class="mb-3"><strong>Explanation:</strong> Python is excellent for backend web development and interacting with other services. It consumes third-party APIs (Application Programming Interfaces) by making HTTP requests over the internet to retrieve or send data (usually in JSON format).</div>
+                    <div class="mb-3"><strong>The Requests Library:</strong> The <code>requests</code> library in Python is the de facto standard for making HTTP requests due to its simplicity and readable syntax.</div>
+                    <div class="bg-slate-800 text-green-400 p-3 rounded text-sm overflow-x-auto mt-2">
+# Example: HTTP GET request using requests
+import requests
+
+url = "https://api.example.com/data"
+response = requests.get(url)
+
+# Check if the request was successful (Status Code 200)
+if response.status_code == 200:
+    data = response.json() # Parse JSON response
+    print(data)
+else:
+    print("Error:", response.status_code)
+                    </div>
+                `
+            },
+            {
+                unit: 1, topic: "Python", marks: 2.5,
+                q: "How do Python's syntax and readability make it suitable for web development?",
+                a: `
+                    <ul class="list-disc pl-5 mb-3 space-y-2">
+                        <li><strong>Clean Syntax:</strong> Python relies on indentation rather than braces to define code blocks, forcing clean, readable code formatting.</li>
+                        <li><strong>English-like:</strong> Keywords are close to plain English, making logic easier to understand and maintain compared to verbose languages.</li>
+                        <li><strong>Rapid Prototyping:</strong> High readability means developers can write and understand code faster, speeding up the development cycle of web applications (especially when using frameworks like Django or Flask).</li>
+                        <li><strong>Fewer Lines of Code:</strong> Complex operations require fewer lines of code, reducing the chance of bugs in server-side logic.</li>
+                    </ul>
+                `
+            },
+            {
+                unit: 2, topic: "CSS", marks: 10,
+                q: "Discuss the box model in CSS with diagrams. Explain how padding, margin, and border properties affect layout.",
+                a: `
+                    <div class="mb-3"><strong>Definition:</strong> The CSS box model is essentially a box that wraps around every HTML element. It determines how elements are sized and how they relate to one another structurally on the page.</div>
+                    <div class="mb-3"><strong>Components:</strong></div>
+                    <ul class="list-disc pl-5 mb-3 space-y-1">
+                        <li><strong>Content:</strong> The actual content of the box, where text and images appear. (e.g., width and height).</li>
+                        <li><strong>Padding:</strong> Clears an area around the content. Padding is transparent. It affects the <em>inner</em> space between content and border.</li>
+                        <li><strong>Border:</strong> A border that goes around the padding and content. It can have thickness, color, and style.</li>
+                        <li><strong>Margin:</strong> Clears an area outside the border. The margin is transparent. It affects the <em>outer</em> space between this element and neighboring elements.</li>
+                    </ul>
+                    <div class="bg-slate-100 p-4 rounded text-center border-2 border-slate-300 mb-2 max-w-sm">
+                        <div class="border-2 border-dashed border-slate-400 p-2 text-xs">Margin
+                            <div class="border-2 border-solid border-slate-800 p-2 bg-white text-xs">Border
+                                <div class="border-2 border-dotted border-green-300 p-2 bg-green-50 text-xs">Padding
+                                    <div class="bg-blue-100 border border-blue-300 p-2 font-bold text-xs">Content</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm font-semibold">Total Width = width + padding-left + padding-right + border-left + border-right + margin-left + margin-right</p>
+                `
+            },
+            {
+                unit: 2, topic: "CSS", marks: 5,
+                q: "Compare inline, internal, and external CSS. Discuss the pros and cons of each approach.",
+                a: `
+                    <table class="w-full text-left text-sm border-collapse mb-3">
+                        <tr class="bg-slate-100"><th class="border p-2">Type</th><th class="border p-2">Where applied?</th><th class="border p-2">Pros</th><th class="border p-2">Cons</th></tr>
+                        <tr>
+                            <td class="border p-2 font-bold text-teal-700">Inline</td>
+                            <td class="border p-2">Inside the HTML tag using <code>style=""</code></td>
+                            <td class="border p-2">Highest priority, quick fixes.</td>
+                            <td class="border p-2">Messy HTML, not reusable, hard to maintain.</td>
+                        </tr>
+                        <tr>
+                            <td class="border p-2 font-bold text-teal-700">Internal</td>
+                            <td class="border p-2">In the <code>&lt;head&gt;</code> within <code>&lt;style&gt;</code> tags.</td>
+                            <td class="border p-2">Good for single, unique page styles.</td>
+                            <td class="border p-2">Styles cannot be shared across multiple pages. Increases page load time.</td>
+                        </tr>
+                        <tr>
+                            <td class="border p-2 font-bold text-teal-700">External</td>
+                            <td class="border p-2">Separate <code>.css</code> file linked in <code>&lt;head&gt;</code>.</td>
+                            <td class="border p-2">Cleanest HTML, highly reusable across entire site, cached by browser.</td>
+                            <td class="border p-2">Requires an extra HTTP request to fetch the file.</td>
+                        </tr>
+                    </table>
+                `
+            },
+            {
+                unit: 2, topic: "CSS", marks: 5,
+                q: "Explain the concept of cascading in CSS. How does it determine the final style of an element?",
+                a: `
+                    <div class="mb-3"><strong>Definition:</strong> "Cascading" in CSS refers to the algorithm that browsers use to determine which CSS rule applies to an element when multiple rules contradict each other.</div>
+                    <div class="mb-3"><strong>How it determines final style (Hierarchy of precedence):</strong></div>
+                    <ol class="list-decimal pl-5 mb-3 space-y-1">
+                        <li><strong>Importance:</strong> Rules marked with <code>!important</code> override everything.</li>
+                        <li><strong>Specificity:</strong> More specific selectors win. (Inline Style > ID selector > Class selector > Element selector).</li>
+                        <li><strong>Source Order:</strong> If specificity is identical, the rule declared <em>last</em> in the stylesheet (or the last loaded stylesheet) wins.</li>
+                    </ol>
+                    <p class="text-sm"><em>Example:</em> If an external stylesheet says <code>p { color: blue; }</code> but an internal style says <code>p { color: red; }</code>, the paragraph will be red because internal usually comes after the external link, or inline beats both.</p>
+                `
+            },
+            {
+                unit: 2, topic: "XML", marks: 2.5,
+                q: "What is XML and how does it differ from HTML?",
+                a: `
+                    <div class="mb-3"><strong>Definition:</strong> XML (eXtensible Markup Language) is a markup language much like HTML, but it was designed to <em>store and transport data</em>, not to display data.</div>
+                    <div class="mb-3"><strong>Differences:</strong></div>
+                    <ul class="list-disc pl-5 mb-3 space-y-1">
+                        <li><strong>Focus:</strong> HTML is about displaying data (how it looks). XML is about carrying data (what it is).</li>
+                        <li><strong>Tags:</strong> HTML has predefined tags (like &lt;p&gt;, &lt;h1&gt;). XML allows authors to define their own tags (e.g., &lt;employee&gt;, &lt;salary&gt;).</li>
+                        <li><strong>Strictness:</strong> XML is very strict. Tags must be properly closed, and it is strictly case-sensitive. HTML is more forgiving.</li>
+                    </ul>
+                `
+            },
+            {
+                unit: 2, topic: "XML", marks: 5,
+                q: "Explain DTD and XML Schema, and state one advantage and one example of each using Schema over DTD.",
+                a: `
+                    <div class="mb-3"><strong>DTD (Document Type Definition):</strong> A set of markup declarations that define a document type for an SGML-family markup language (like XML). It defines the legal building blocks of an XML document (elements, attributes).</div>
+                    <div class="mb-3"><strong>XML Schema:</strong> An XML-based alternative to DTD. It describes the structure of an XML document but does so using XML syntax itself.</div>
+                    <div class="mb-3"><strong>Advantage of Schema over DTD:</strong> XML Schemas support data types (e.g., you can specify that an "Age" element must contain an integer). DTDs treat everything as text.</div>
+                    <div class="bg-slate-800 text-green-400 p-3 rounded text-sm overflow-x-auto mt-2">
+&lt;!-- Simple XML Schema Example --&gt;
+&lt;xs:element name="age" type="xs:integer"/&gt;
+
+&lt;!-- Corresponding DTD (Cannot enforce integer, only text) --&gt;
+&lt;!ELEMENT age (#PCDATA)&gt;
+                    </div>
+                `
+            }
+        ];
+
+        // UI State Management
+        function navTo(sectionId) {
+            // Update buttons
+            document.querySelectorAll('nav button').forEach(btn => {
+                btn.classList.remove('nav-active', 'text-slate-900');
+                btn.classList.add('text-slate-500');
+            });
+            document.getElementById(`nav-${sectionId}`).classList.remove('text-slate-500');
+            document.getElementById(`nav-${sectionId}`).classList.add('nav-active', 'text-slate-900');
+
+            // Update sections
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById(`sec-${sectionId}`).classList.remove('hidden');
+
+            if(sectionId === 'pyq') filterPYQs();
+        }
+
+        function switchRevTab(tabId) {
+            document.querySelectorAll('#sec-revision ul button').forEach(btn => {
+                btn.classList.remove('border-teal-600', 'text-teal-600');
+                btn.classList.add('border-transparent');
+            });
+            const activeBtn = document.getElementById(`rev-tab-${tabId}`);
+            activeBtn.classList.remove('border-transparent');
+            activeBtn.classList.add('border-teal-600', 'text-teal-600');
+
+            document.getElementById('rev-content-html').classList.add('hidden');
+            document.getElementById('rev-content-css').classList.add('hidden');
+            document.getElementById('rev-content-xml').classList.add('hidden');
+            
+            document.getElementById(`rev-content-${tabId}`).classList.remove('hidden');
+        }
+
+        // Render PYQs
+        function renderPYQs(data) {
+            const container = document.getElementById('pyq-container');
+            container.innerHTML = '';
+            
+            if(data.length === 0) {
+                container.innerHTML = '<p class="text-slate-500 italic">No questions found for this filter.</p>';
+                return;
+            }
+
+            data.forEach((pyq, index) => {
+                const marksBadge = `<span class="bg-teal-100 text-teal-800 text-xs font-semibold px-2.5 py-0.5 rounded ml-2">${pyq.marks} Marks</span>`;
+                const unitBadge = `<span class="bg-slate-100 text-slate-600 border border-slate-300 text-xs px-2.5 py-0.5 rounded">Unit ${pyq.unit}</span>`;
+                
+                const html = `
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="p-4 cursor-pointer hover:bg-slate-50 transition-colors flex justify-between items-center" onclick="toggleAnswer('ans-${index}')">
+                            <div class="pr-4">
+                                <div class="mb-1 flex items-center space-x-2">${unitBadge} <span class="text-xs text-slate-500 font-medium">${pyq.topic}</span></div>
+                                <h3 class="font-bold text-slate-800 text-lg">${pyq.q} ${marksBadge}</h3>
+                            </div>
+                            <div class="text-slate-400 text-xl font-bold transition-transform duration-200" id="icon-${index}">+</div>
+                        </div>
+                        <div id="ans-${index}" class="hidden bg-slate-50 p-5 border-t border-slate-200 text-slate-700">
+                            ${pyq.a}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function filterPYQs() {
+            const unitFilter = document.getElementById('filter-unit').value;
+            const topicFilter = document.getElementById('filter-topic').value;
+
+            const filtered = pyqDatabase.filter(pyq => {
+                const unitMatch = unitFilter === 'all' || pyq.unit == unitFilter;
+                const topicMatch = topicFilter === 'all' || pyq.topic === topicFilter;
+                return unitMatch && topicMatch;
+            });
+            renderPYQs(filtered);
+        }
+
+        function toggleAnswer(id) {
+            const el = document.getElementById(id);
+            const icon = document.getElementById(id.replace('ans-', 'icon-'));
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                icon.innerText = '-';
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                el.classList.add('hidden');
+                icon.innerText = '+';
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Generate Mock Test
+        function generateMock() {
+            document.getElementById('mock-paper-container').classList.remove('hidden');
+            
+            // Utility to get random elements
+            const getRandom = (arr, n) => {
+                const shuffled = [...arr].sort(() => 0.5 - Math.random());
+                return shuffled.slice(0, n);
+            };
+
+            const shortQs = pyqDatabase.filter(q => q.marks === 2.5);
+            const longUnit1 = pyqDatabase.filter(q => q.marks >= 5 && q.unit === 1);
+            const longUnit2 = pyqDatabase.filter(q => q.marks >= 5 && q.unit === 2);
+
+            // Select
+            const selectedShort = getRandom(shortQs, 4);
+            const selectedU1 = getRandom(longUnit1, 3); // Provide 3, attempt 2
+            const selectedU2 = getRandom(longUnit2, 3); // Provide 3, attempt 2
+
+            // Populate Q1
+            const q1List = document.getElementById('mock-q1');
+            q1List.innerHTML = '';
+            selectedShort.forEach(q => q1List.innerHTML += `<li>${q.q}</li>`);
+
+            // Populate Q2
+            const q2List = document.getElementById('mock-q2');
+            q2List.innerHTML = '';
+            selectedU1.forEach(q => q2List.innerHTML += `<li>${q.q}</li>`);
+
+            // Populate Q3
+            const q3List = document.getElementById('mock-q3');
+            q3List.innerHTML = '';
+            selectedU2.forEach(q => q3List.innerHTML += `<li>${q.q}</li>`);
+        }
+
+        // Initialize Chart
+        function initChart() {
+            // Calculate frequencies from DB
+            const frequencies = {};
+            pyqDatabase.forEach(q => {
+                frequencies[q.topic] = (frequencies[q.topic] || 0) + 1;
+            });
+
+            const ctx = document.getElementById('topicChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(frequencies),
+                    datasets: [{
+                        label: 'Number of Questions in PYQs',
+                        data: Object.values(frequencies),
+                        backgroundColor: '#0d9488', // teal-600
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + ' Questions asked';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1, precision: 0 }
+                        },
+                        x: {
+                            ticks: {
+                                callback: function(val, index) {
+                                    // Label wrapping
+                                    let label = this.getLabelForValue(val);
+                                    if (label.length > 15) {
+                                        let split = label.split(' ');
+                                        if(split.length > 1) {
+                                            return split.slice(0, 2).join(' ') + '...';
+                                        }
+                                        return label.substring(0, 15) + '...';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialization
+        window.onload = () => {
+            initChart();
+            renderPYQs(pyqDatabase);
+        };
+    </script>
+</body>
+</html>
