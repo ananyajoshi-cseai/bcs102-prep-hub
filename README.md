@@ -2,6 +2,15 @@
 
 A comprehensive, non-linear study dashboard designed specifically for BCS-102 (Unit I & II) exam preparation. This tool moves away from traditional linear reading, allowing students to strategically diagnose weaknesses, explore past questions, and self-assess through interactive features.
 
+## 🚀 How to Use
+
+**🌟 The easiest way to access the study hub is to visit the live site directly:** 👉 [https://ananyajoshi-cseai.github.io/bcs102-prep-hub/](https://ananyajoshi-cseai.github.io/bcs102-prep-hub/)
+
+Alternatively, to run it locally on your own machine:
+1. Clone this repository or download the `index.html` file.
+2. Double-click `index.html` to open it in any modern web browser.
+3. Start studying!
+
 ## ✨ Key Features
 
 ### 📊 Dashboard & Analytics
@@ -19,6 +28,7 @@ Automatically compiles a randomized 30-mark, 1.5-hour mock examination paper bas
 ### ⚡ Quick Revision Sheets
 A fast, tabbed interface providing ultra-concise cheat sheets, syntax guides, and key definitions for HTML, CSS (including the Box Model), and XML—perfect for night-before revision.
 ![Quick Revision View](Quick%20Revision.png)
+
 ## 🛠️ Tech Stack
 
 * **Frontend:** HTML5, Vanilla JavaScript
@@ -26,12 +36,10 @@ A fast, tabbed interface providing ultra-concise cheat sheets, syntax guides, an
 * **Data Visualization:** Chart.js (via CDN)
 * **Architecture:** Single Page Application (SPA)
 
-## 🚀 How to Use
+## 👩‍💻 Author
 
-Since this is a fully self-contained Single Page Application, there is no build step or installation required:
-1. Clone this repository or download the `index.html` file.
-2. Double-click `index.html` to open it in any modern web browser.
-3. Start studying!
+**Ananya Joshi** B.Tech, Computer Science and Artificial Intelligence (CSE AI)  
+Indira Gandhi Delhi Technical University for Women (IGDTUW)  
 
 ---
-*Built for BCS-102 Exam Preparation | Built by Ananya Joshi*
+*Built for BCS-102 Exam Preparation.*
