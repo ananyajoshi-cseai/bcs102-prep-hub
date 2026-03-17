@@ -39,10 +39,12 @@ A fast, tabbed interface providing ultra-concise cheat sheets, syntax guides, an
 * **Data Visualization:** Chart.js (via CDN)
 * **Architecture:** Single Page Application (SPA)
 
-## 👩‍💻 Author
+## 👩‍💻 About the Developer
 
-**Ananya Joshi** B.Tech, Computer Science and Artificial Intelligence (CSE AI)  
-Indira Gandhi Delhi Technical University for Women (IGDTUW)  
+I am **Ananya Joshi**, a B.Tech student in **Computer Science and Artificial Intelligence** at **Indira Gandhi Delhi Technical University for Women (IGDTUW)**. I enjoy building tools that bridge the gap between complex data and user-friendly interfaces.
 
+* **LinkedIn:** [ananya-joshi-cseai](https://www.linkedin.com/in/ananya-joshi-cseai/)
+* **GitHub:** [@ananyajoshi-cseai](https://github.com/ananyajoshi-cseai)
+* **Other Projects:** [After-Feel](https://github.com/ananyajoshi-cseai/after-feel) (AI Poetry Portfolio) and [CareerFlow AI](https://github.com/ananyajoshi-cseai/CareerFlow-AI).
 ---
 *Built for BCS-102 Exam Preparation.*
