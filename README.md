@@ -47,4 +47,4 @@ I am **Ananya Joshi**, a B.Tech student in **Computer Science and Artificial Int
 * **GitHub:** [@ananyajoshi-cseai](https://github.com/ananyajoshi-cseai)
 * **Other Projects:** [After-Feel](https://github.com/ananyajoshi-cseai/after-feel) (AI Poetry Portfolio) and [CareerFlow AI](https://github.com/ananyajoshi-cseai/CareerFlow-AI).
 ---
-*Built for BCS-102 Exam Preparation.*
+*Built for BCS-102: Web App Developement Exam Preparation.*
