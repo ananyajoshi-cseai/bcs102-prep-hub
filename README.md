@@ -5,7 +5,7 @@ A comprehensive, non-linear study dashboard designed specifically for BCS-102 (U
 
 ## 🚀 How to Use
 
-The easiest way to access the study hub is to visit the live site directly:
+The easiest way to access the study hub is to visit the live site directly ;)
 
 👉 [https://ananyajoshi-cseai.github.io/bcs102-prep-hub/](https://ananyajoshi-cseai.github.io/bcs102-prep-hub/)
 
