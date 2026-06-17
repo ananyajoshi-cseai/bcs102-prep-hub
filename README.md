@@ -5,7 +5,7 @@ A comprehensive, study dashboard designed specifically for BCS-102 (Unit I & II)
 
 ## 🚀 How to Use
 
-The easiest way to access the study hub is to visit the live site directly via this link.
+The easiest way to access the study hub is to visit the live site directly via this link!
 
 👉 [https://ananyajoshi-cseai.github.io/bcs102-prep-hub/](https://ananyajoshi-cseai.github.io/bcs102-prep-hub/)
 
