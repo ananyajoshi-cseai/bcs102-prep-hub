@@ -1,11 +1,11 @@
 # 🎓 BCS-102 Prep Hub: Web Application Development
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Click_Here!-0f766e?style=for-the-badge)](https://ananyajoshi-cseai.github.io/bcs102-prep-hub/)
 
-A comprehensive, study dashboard designed specifically for BCS-102 (Unit I & II) exam preparation. This tool moves away from traditional linear reading, allowing students to strategically diagnose weaknesses, explore past questions, and self-assess through interactive features
+A comprehensive, study dashboard designed specifically for BCS-102 (Unit I & II) exam preparation. This tool moves away from traditional linear reading, allowing students to strategically diagnose weaknesses, explore past questions, and self-assess through interactive features...
 
 ## 🚀 How to Use
 
-The easiest way to access the study hub is to visit the live site directly via this link!
+The easiest way to access the study hub is to visit the live site directly via this link
 
 👉 [https://ananyajoshi-cseai.github.io/bcs102-prep-hub/](https://ananyajoshi-cseai.github.io/bcs102-prep-hub/)
 
