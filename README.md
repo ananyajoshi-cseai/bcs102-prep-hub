@@ -10,8 +10,8 @@ The easiest way to access the study hub is to visit the live site directly via t
 👉 [https://ananyajoshi-cseai.github.io/bcs102-prep-hub/](https://ananyajoshi-cseai.github.io/bcs102-prep-hub/)
 
 Alternatively, to run it locally on your own machine:
-1. Clone this repository or download the `index.html` file.
-2. Double-click `index.html` to open it in any modern web browser.
+1. Clone this repository or download the `index.html` file
+2. Double-click `index.html` to open it in any modern web browser
 3. Start studying!
 
 ## ✨ Key Features
