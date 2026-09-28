@@ -3,7 +3,7 @@
 
 A comprehensive, study dashboard designed specifically for BCS-102 exam preparation. This tool moves away from traditional linear reading, allowing students to strategically diagnose weaknesses, explore past questions, and self-assess through interactive features...
 
-## 🚀 How to Use
+##  How to Use
 
 The easiest way to access the study hub is to visit the live site directly via this link!
 
